@@ -7,7 +7,11 @@ public class PlayerMovementController : MonoBehaviour
     InputManager inputManager;
     AnimationController animationController;
 
+
     private float movementSpeed;
+    public bool isPlayerIdle;
+    public bool isPlayerRun;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,13 +25,15 @@ public class PlayerMovementController : MonoBehaviour
     {
         if(inputManager.isTouchPress == true)
         {
-            animationController.PlayerRunAnimation();
+            isPlayerIdle = false;
+            isPlayerRun = true;
             this.transform.position = Vector3.Lerp(this.transform.position, new Vector3(inputManager._Target.x * 200, 0f, inputManager._Target.y * 200), movementSpeed * Time.deltaTime);
             this.transform.rotation = Quaternion.LookRotation(Vector3.Lerp(this.transform.position, new Vector3(inputManager._Target.x * 200, 0f, inputManager._Target.y * 200), 150 * Time.deltaTime));
         }
         else
         {
-            animationController.PlayerIdleAnimation();
+            isPlayerIdle = true;
+            isPlayerRun = false;
         }
     }
 }

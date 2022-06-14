@@ -6,6 +6,11 @@ TagManager:
   tags:
   - AnimationController
   - PrinterDesk
+  - SecretaryDesks
+  - ComputerDesk
+  - Money
+  - Folder
+  - ATM
   layers:
   - Default
   - TransparentFX

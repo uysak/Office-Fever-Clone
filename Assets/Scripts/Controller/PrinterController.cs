@@ -5,6 +5,7 @@ using UnityEngine;
 public class PrinterController : MonoBehaviour
 {
     [SerializeField] GameObject Folder;
+    //[SerializeField] GameObject Secretary;
 
     private GameObject FolderTray;
     private Vector3 spawnPos;
@@ -15,10 +16,7 @@ public class PrinterController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        InvokeRepeating("SpawnFolder", 1, 1);
         FolderTray = this.gameObject.transform.GetChild(3).gameObject;
-        spawnPos = FolderTray.transform.position;
-        spawnPos.y += 0.2f;
     }
 
     public void SpawnFolder()
@@ -35,6 +33,7 @@ public class PrinterController : MonoBehaviour
             spawnPos.y += 0.1f;
             Folders.Add(Instantiate(Folder, spawnPos, Folder.transform.rotation,FolderTray.transform));
         }
+
     }
 
     public GameObject getLastFolder()
@@ -44,5 +43,9 @@ public class PrinterController : MonoBehaviour
     public void RemoveLastFolderFromList()
     {
         Folders.RemoveAt(Folders.Count - 1);
+    }
+    public int getFolderCount()
+    {
+        return Folders.Count;
     }
 }
