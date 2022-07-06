@@ -13,19 +13,19 @@ public class AnimationController : MonoBehaviour
 
     public void SetPlayerAnimation()
     {
-        if(playerMovementController.isPlayerIdle == true && collectedObjManager.getCollectedObjectsCount() == 0)
+        if(playerMovementController.isPlayerIdle == true && collectedObjManager.getFoldersCount() == 0)
         {
             PlayerIdleAnimation();
         }
-        else if(playerMovementController.isPlayerIdle == true && collectedObjManager.getCollectedObjectsCount() != 0)
+        else if(playerMovementController.isPlayerIdle == true && collectedObjManager.getFoldersCount() != 0)
         {
             PlayerCarryIdleAnimation();
         }
-        if(playerMovementController.isPlayerRun == true && collectedObjManager.getCollectedObjectsCount() == 0)
+        if(playerMovementController.isPlayerRun == true && collectedObjManager.getFoldersCount() == 0)
         {
             PlayerWalkAnimation();
         }
-        else if(playerMovementController.isPlayerRun == true && collectedObjManager.getCollectedObjectsCount() != 0)
+        else if(playerMovementController.isPlayerRun == true && collectedObjManager.getFoldersCount() != 0)
         {
             PlayerCarryRunAnimation();
         }

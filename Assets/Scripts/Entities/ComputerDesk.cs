@@ -2,8 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ComputerDesk : MonoBehaviour
+public class ComputerDesk : MonoBehaviour,Interfaces.ICollectible,Interfaces.IGiveable
 {
+
+    CollectedObjManager collectedObjManager;
+
+    private bool canGiveMoney = true;
+    private bool canCollect = true;
+
     private GameObject FolderTray;
     private GameObject MoneyTray;
     [SerializeField] GameObject Money;
@@ -25,61 +31,94 @@ public class ComputerDesk : MonoBehaviour
         MoneyTray  = this.transform.GetChild(8).gameObject;
 
         animation = Secretary.GetComponent<Animation>();
+
+        collectedObjManager = GameObject.FindGameObjectWithTag("Player").GetComponent<CollectedObjManager>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Collect()
     {
-        
-    }
+        if (Folders.Count > 20 || collectedObjManager.getFoldersCount() == 0 || canCollect == false)
+            return;
+        canCollect = false;
 
-    public void TakeFolder(GameObject TakedFolder)
-    {
-        Folders.Add(TakedFolder);
-        TakedFolder.transform.SetParent(this.transform);
-        TakedFolder.transform.rotation = FolderTray.transform.rotation;
+        GameObject Folder = collectedObjManager.getLastFolderOnList();
+        Folders.Add(Folder);
+        collectedObjManager.RemoveLastFolderOnList(Folder);
+        Folder.transform.SetParent(this.transform);
+        Folder.transform.rotation = FolderTray.transform.rotation;
 
         if (Folders.Count == 1)
         {
             FolderPosition = FolderTray.transform.position;
             FolderPosition.y += 0.1f;
-            StartCoroutine(LerpPosition(TakedFolder, FolderPosition,.05f));
+            StartCoroutine(LerpPositionFolder(Folder, FolderPosition, 0.20f));
         }
         else
         {
             FolderPosition = FolderTray.transform.position;
             FolderPosition.y += (Folders.Count * 0.05f);
-            StartCoroutine(LerpPosition(TakedFolder, FolderPosition,.05f));
+            StartCoroutine(LerpPositionFolder(Folder, FolderPosition, 0.20f));
         }
+    }
 
-    }
-    
-    public GameObject GiveMoney()
+    public void Give(GameObject WhoGiven)
     {
-        return Moneys[Moneys.Count - 1];
+        if (getMoneysCount() == 0 || canGiveMoney == false )
+            return;
+        canGiveMoney = false;
+
+        GameObject Money = Moneys[getMoneysCount() - 1];
+        WhoGiven.GetComponent<CollectedObjManager>().AddMoney(Money);
+        //StartCoroutine(collectedObjManager.LerpPositionMoney(Money, collectedObjManager.getMoneyTrayPos(), 0.30f));
+        StartCoroutine(LerpPositionMoney(Money, collectedObjManager.getMoneyTrayPos(), 0.20f));
+        Moneys.Remove(Money);
     }
+
     public void RemoveLastMoneyFromList()
     {
         Moneys.RemoveAt(Moneys.Count - 1);
     }
-    IEnumerator LerpPosition(GameObject TakedFolder,Vector3 targetPosition, float duration)
+    IEnumerator LerpPositionMoney(GameObject TakedMoney,Vector3 targetPosition, float duration)
     {
+        //if (TakedMoney == null)
+        //    yield return null;
+
+        float time = 0;
+        Vector3 startPosition = TakedMoney.transform.position;
+        while (time < duration)
+        {
+            targetPosition = collectedObjManager.getMoneyTrayPos();
+            TakedMoney.transform.position = Vector3.Lerp(startPosition, targetPosition, time / duration);
+            time += Time.deltaTime;
+            yield return null;
+        }
+        if(TakedMoney != null)
+            TakedMoney.transform.position = targetPosition;
+        canGiveMoney = true;
+    }
+    IEnumerator LerpPositionFolder(GameObject TakedFolder, Vector3 targetPosition, float duration)
+    {
+        if (TakedFolder == null)
+            yield return null;
         float time = 0;
         Vector3 startPosition = TakedFolder.transform.position;
         while (time < duration)
         {
-            TakedFolder.transform.position = Vector3.Lerp(startPosition, targetPosition, time / duration);
+            if(TakedFolder != null)
+                TakedFolder.transform.position = Vector3.Lerp(startPosition, targetPosition, time / duration);
             time += Time.deltaTime;
             yield return null;
         }
-        TakedFolder.transform.position = targetPosition;
+        if(TakedFolder != null)
+            TakedFolder.transform.position = targetPosition;
+        canCollect = true;
     }
+
 
     public void CheckFolder()
     {
         if(Folders.Count == 0)
         {
-            CancelInvoke("Work");
             animation.clip = animation.GetClip("Sitting");
             animation.Play();
         }
@@ -123,4 +162,6 @@ public class ComputerDesk : MonoBehaviour
     {
         return Folders.Count;
     }
+
+
 }
