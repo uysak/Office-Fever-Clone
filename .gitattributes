@@ -1,2 +1,1 @@
-[[:space:]][[:space:]] filter=lfs diff=lfs merge=lfs -text
-E:/GitRepos/Office-Fever/Office-Fever-Clone/Assets/AssetStore/* filter=lfs diff=lfs merge=lfs -text
+
